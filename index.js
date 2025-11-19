@@ -32,7 +32,7 @@ class Gameboard {
             if (nx < 0 || nx > 9 || ny < 0 || ny > 9) return 'invalid coordinates';
             if (this.board[nx][ny] !== null) return 'already occupied';
 
-            tempPositions.push([x, y+i]);
+            tempPositions.push([nx, ny]);
         }
 
         for (let j = 0; j < tempPositions.length; j++) {
