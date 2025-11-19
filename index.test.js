@@ -1,4 +1,4 @@
-const { Ship } = require('./index');
+const { Ship, Gameboard } = require('./index');
 
 describe('Ship', () => {
     test('Should increase hit count', () => {
@@ -18,3 +18,15 @@ describe('Ship', () => {
     });
 });
 
+describe('Gameboard', () => {
+    test('placed the ship inside the gameboard', () => {
+        const board = new Gameboard();
+        const ship = new Ship(3);
+
+        board.placeShip(3, 5, ship);
+
+        expect(board.board[3][5]).toBe(ship);
+        expect(board.board[3][6]).toBe(ship);
+        expect(board.board[3][7]).toBe(ship);
+    });
+});
