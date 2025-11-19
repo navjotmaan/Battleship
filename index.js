@@ -17,8 +17,8 @@ class Ship {
 class Gameboard {
     constructor () {
         this.board = Array.from({length: 10}, () => Array(10).fill(null));
-        this.hitShip = [];
-        this.missedAttack = [];
+        this.attackedShips = [];
+        this.missedAttacks = [];
         this.ships = [];
     }
 
@@ -45,23 +45,17 @@ class Gameboard {
     }
 
     receiveAttack(x, y) {
-        const ship = this.board[x][y];
-            if (!this.hitShip.includes(ship)) {
-                const cut = ship.hit();
+        const target = this.board[x][y];
 
-                if (ship !== null && !this.missedAttack.includes(ship)) {
-                    this.hitShip.push(ship);
-                }
-
-                if (!this.missedAttack.includes(ship)) {
-                    this.missedAttack.push(ship);
-                }
-            
-            } 
-
-        if (this.hitShip.length >= this.ships) {
-            return 'All ships sink';
+        if (target !== null) {
+                target.hit();
+                this.attackedShips.push([x, y]);
+        } else {
+            this.missedAttacks.push([x, y]);
         }
+
+        const allSunk = this.ships.every(ship => ship.isSunk());
+        if (allSunk) return 'All ships sunk';
     }
 }
 
