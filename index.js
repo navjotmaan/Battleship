@@ -47,10 +47,11 @@ class Gameboard {
     receiveAttack(x, y) {
         const target = this.board[x][y];
 
-        if (target !== null) {
+        if (target !== null && !this.attackedShips.some(pos => pos[0] === x && pos[1] === y)) {
                 target.hit();
                 this.attackedShips.push([x, y]);
-        } else {
+        } 
+        if (!this.missedAttacks.some(pos => pos[0] === x && pos[1] === y)) {
             this.missedAttacks.push([x, y]);
         }
 
