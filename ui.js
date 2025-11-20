@@ -1,0 +1,1 @@
+const { Ship, Gameboard } = require('./index');
