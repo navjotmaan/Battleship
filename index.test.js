@@ -19,6 +19,9 @@ describe('Ship', () => {
 });
 
 describe('Gameboard', () => {
+
+    // Tests for placeShip function
+
     test('places ship horizontally', () => {
         const board = new Gameboard();
         const ship = new Ship(3);
@@ -63,4 +66,47 @@ describe('Gameboard', () => {
         ]);
     });
 
+    // Tests for receiveAttack function
+
+    test('hits ship at given coordinate', () => {
+        const board = new Gameboard();
+        const ship = new Ship(3);
+        
+        board.placeShip(3, 5, ship);
+        board.receiveAttack(3, 5);
+
+        expect(ship.hits).toBe(1);
+        expect(board.attackedShips).toEqual([[3, 5]]);
+    });
+
+    test('records missed attack when no ship present', () => {
+        const board = new Gameboard();
+        board.receiveAttack(4, 4);
+
+        expect(board.missedAttacks).toEqual([[4, 4]]);
+    });
+
+    test('does not double-hit the same coordinate', () => {
+        const board = new Gameboard();
+        const ship = new Ship(3);
+        board.placeShip(3, 5, ship);
+
+        board.receiveAttack(3, 5);
+        board.receiveAttack(3, 5);
+
+        expect(ship.hits).toBe(1);
+        expect(board.attackedShips.length).toBe(1);
+    });
+
+    test('returns "all ships sunk" when all ships are destroyed', () => {
+        const board = new Gameboard();
+        const ship = new Ship(2);
+
+        board.placeShip(3, 5, ship);
+
+        board.receiveAttack(3, 5);
+        const result = board.receiveAttack(3, 6);
+
+        expect(result).toBe('All ships sunk');
+    });
 });
