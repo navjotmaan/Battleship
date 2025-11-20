@@ -23,7 +23,7 @@ class Gameboard {
     }
 
     placeShip(x, y, ship) {
-        let tempPositions = [];
+        let temp = [];
 
         for (let i = 0; i < ship.length; i++) {
             let nx = x;
@@ -32,27 +32,32 @@ class Gameboard {
             if (nx < 0 || nx > 9 || ny < 0 || ny > 9) return 'invalid coordinates';
             if (this.board[nx][ny] !== null) return 'already occupied';
 
-            tempPositions.push([nx, ny]);
+            temp.push([nx, ny]);
         }
 
-        for (let j = 0; j < tempPositions.length; j++) {
-            let [nx, ny] = tempPositions[j];
+        for (const [nx, ny] of temp) {
             this.board[nx][ny] = ship;
             ship.position.push([nx, ny]);
         }
 
         this.ships.push(ship);
+        return true;
     }
 
     receiveAttack(x, y) {
         const target = this.board[x][y];
 
-        if (target !== null && !this.attackedShips.some(pos => pos[0] === x && pos[1] === y)) {
+        if (target !== null) {
+            const alreadyHit = this.attackedShips.some(pos => pos[0] === x && pos[1] === y);
+            if (!alreadyHit) {
                 target.hit();
                 this.attackedShips.push([x, y]);
-        } 
-        if (!this.missedAttacks.some(pos => pos[0] === x && pos[1] === y)) {
-            this.missedAttacks.push([x, y]);
+            }
+        } else {
+            const alreadyMissed = this.missedAttacks.some(pos => pos[0] === x && pos[1] === y);
+            if (!alreadyMissed) {
+                this.missedAttacks.push([x, y]);
+            }
         }
 
         const allSunk = this.ships.every(ship => ship.isSunk());
