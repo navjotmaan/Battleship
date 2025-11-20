@@ -65,4 +65,11 @@ class Gameboard {
     }
 }
 
-module.exports = { Ship, Gameboard };
+class Player {
+    constructor(name) {
+        this.name = name;
+        this.board = new Gameboard();
+    }
+}
+
+module.exports = { Ship, Gameboard, Player };
