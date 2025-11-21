@@ -49,19 +49,25 @@ class Gameboard {
 
         if (target !== null) {
             const alreadyHit = this.attackedShips.some(pos => pos[0] === x && pos[1] === y);
+
             if (!alreadyHit) {
                 target.hit();
                 this.attackedShips.push([x, y]);
+
+                if (this.ships.every(ship => ship.isSunk())) {
+                    return 'All ships sunk';
+                }
+
+                return 'hit';
             }
+            
         } else {
             const alreadyMissed = this.missedAttacks.some(pos => pos[0] === x && pos[1] === y);
             if (!alreadyMissed) {
                 this.missedAttacks.push([x, y]);
+                return 'miss';
             }
-        }
-
-        const allSunk = this.ships.every(ship => ship.isSunk());
-        if (allSunk) return 'All ships sunk';
+        } 
     }
 }
 
