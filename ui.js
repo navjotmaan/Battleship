@@ -16,6 +16,7 @@ createGrid(playerBoardDiv);
 
 const game = new Gameboard();
 let mode = 'placing';
+let orientation = 'horizontal';
 
 const shipsToPlace = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 let currentShipIndex = 0;
@@ -33,13 +34,19 @@ playerBoardDiv.addEventListener("click", (e) => {
     }
 });
 
+playerBoardDiv.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    orientation = orientation === 'horizontal' ? 'vertical' : 'horizontal';
+    console.log('Orientation changed:', orientation);
+});
+
 function handleShipPlacement(x, y, cell) {
     if (currentShipIndex >= shipsToPlace.length) return;
 
     const shipLength = shipsToPlace[currentShipIndex];
     const ship = new Ship(shipLength);
 
-    const status = game.placeShip(x, y, ship);
+    const status = game.placeShip(x, y, ship, orientation);
 
     if (status === 'already occupied' || status === 'invalid coordinates') {
         console.log(status);
