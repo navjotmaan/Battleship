@@ -64,6 +64,9 @@ function handleShipPlacement(x, y, cell) {
 } 
 
 function handleAttack(x, y, cell) {
+    if (cell.classList.contains('attacked')) return;
+    cell.classList.add('attacked');
+
     const result = computer.receiveAttack(x, y);
 
     if (result === 'hit') {
@@ -71,6 +74,7 @@ function handleAttack(x, y, cell) {
     } else if (result === 'miss') {
         cell.style.background = 'white';
     }
+
     if (result === 'All ships sunk') {
         cell.style.background = 'red';
         gameOver = true;
@@ -85,6 +89,8 @@ computerBoardDiv.addEventListener('click', (e) => {
     if (gameOver) return;
     if (!e.target.classList.contains("cell")) return;
     if (currentShipIndex < shipsToPlace.length) return;
+
+    if (e.target.classList.contains('attacked')) return;
 
     let x = Number(e.target.dataset.x);
     let y = Number(e.target.dataset.y);
@@ -115,19 +121,19 @@ function placeComputerShips() {
 
 function computerAttack() {
     let x, y;
+    let cell;
 
-    // keep generating random coordinates until you find a cell not already attacked
-    do {
+    while (true) {
         x = Math.floor(Math.random() * 10);
         y = Math.floor(Math.random() * 10);
-    } while (
-        player.attackedShips.some(pos => pos[0] === x && pos[1] === y) ||
-        player.missedAttacks.some(pos => pos[0] === x && pos[1] === y)
-    );
+
+        cell = document.querySelector(`#player-board .cell[data-x='${x}'][data-y='${y}']`);
+        if (!cell.classList.contains('attacked')) break;
+    }
+
+    cell.classList.add("attacked");
 
     const result = player.receiveAttack(x, y);
-
-    const cell = playerBoardDiv.querySelector(`.cell[data-x='${x}'][data-y='${y}']`);
 
     if (result === 'hit') {
         cell.style.background = 'red';
