@@ -3,6 +3,12 @@ import { Ship, Gameboard } from './script.js';
 const playerBoardDiv = document.getElementById("player-board");
 const computerBoardDiv = document.getElementById('computer-board');
 
+const player = new Gameboard();
+const computer = new Gameboard();
+
+let mode = 'placing';
+let orientation = 'horizontal';
+
 function createGrid(boardDiv) {
     for (let i = 0; i < 100; i++) {
         const cell = document.createElement("div");
@@ -16,11 +22,7 @@ function createGrid(boardDiv) {
 createGrid(playerBoardDiv);
 createGrid(computerBoardDiv);
 
-const player = new Gameboard();
-const computer = new Gameboard();
-
-let mode = 'placing';
-let orientation = 'horizontal';
+placeComputerShips();
 
 const shipsToPlace = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 let currentShipIndex = 0;
@@ -93,3 +95,24 @@ computerBoardDiv.addEventListener('click', (e) => {
 
     handleAttack(x, y, e.target);
 });
+
+function placeComputerShips() {
+    const lengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+
+    lengths.forEach(len => {
+        let placed = false;
+
+        while (!placed) {
+            const ship = new Ship(len);
+
+            const x = Math.floor(Math.random() * 10);
+            const y = Math.floor(Math.random() * 10);
+            orientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+
+            const result = computer.placeShip(x, y, ship, orientation);
+
+            if (result !== true) continue;
+            placed = true;
+        }
+    });
+}
