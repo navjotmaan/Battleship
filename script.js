@@ -22,12 +22,12 @@ class Gameboard {
         this.ships = [];
     }
 
-    placeShip(x, y, ship) {
+    placeShip(x, y, ship, orientation = 'horizontal') {
         let temp = [];
 
         for (let i = 0; i < ship.length; i++) {
-            let nx = x;
-            let ny = y + i;
+            let nx = x + (orientation === 'vertical' ? i : 0);
+            let ny = y + (orientation === 'horizontal' ? i : 0);
 
             if (nx < 0 || nx > 9 || ny < 0 || ny > 9) return 'invalid coordinates';
             if (this.board[nx][ny] !== null) return 'already occupied';
