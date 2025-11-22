@@ -142,6 +142,7 @@ function computerAttack() {
     }
 
     if (result === 'All ships sunk') {
+        cell.style.background = 'red';
         gameOver= true;
         alert("Computer wins");
         return;
