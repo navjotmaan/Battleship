@@ -1,6 +1,7 @@
 import { Ship, Gameboard } from './script.js';
 
 const playerBoardDiv = document.getElementById("player-board");
+const computerBoardDiv = document.getElementById('computer-board');
 
 function createGrid(boardDiv) {
     for (let i = 0; i < 100; i++) {
@@ -13,8 +14,11 @@ function createGrid(boardDiv) {
 }
 
 createGrid(playerBoardDiv);
+createGrid(computerBoardDiv);
 
-const game = new Gameboard();
+const player = new Gameboard();
+const computer = new Gameboard();
+
 let mode = 'placing';
 let orientation = 'horizontal';
 
@@ -46,7 +50,7 @@ function handleShipPlacement(x, y, cell) {
     const shipLength = shipsToPlace[currentShipIndex];
     const ship = new Ship(shipLength);
 
-    const status = game.placeShip(x, y, ship, orientation);
+    const status = player.placeShip(x, y, ship, orientation);
 
     if (status === 'already occupied' || status === 'invalid coordinates') {
         console.log(status);
@@ -66,7 +70,7 @@ function handleShipPlacement(x, y, cell) {
 } 
 
 function handleAttack(x, y, cell) {
-    const result = game.receiveAttack(x, y);
+    const result = player.receiveAttack(x, y);
 
     if (result === 'hit') {
         cell.style.background = 'red';
@@ -78,3 +82,14 @@ function handleAttack(x, y, cell) {
         console.log('All ships sunks');
     }
 }
+
+computerBoardDiv.addEventListener('click', (e) => {
+    if (mode !== 'attacking') return;
+
+    if (!e.target.classList.contains("cell")) return;
+    
+    let x = Number(e.target.dataset.x);
+    let y = Number(e.target.dataset.y);
+
+    handleAttack(x, y, e.target);
+});
