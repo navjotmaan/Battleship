@@ -6,6 +6,7 @@ const computerBoardDiv = document.getElementById('computer-board');
 const player = new Gameboard();
 const computer = new Gameboard();
 let orientation = 'horizontal';
+let gameOver = false;
 
 function createGrid(boardDiv) {
     for (let i = 0; i < 100; i++) {
@@ -26,6 +27,7 @@ const shipsToPlace = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 let currentShipIndex = 0;
 
 playerBoardDiv.addEventListener("click", (e) => {
+    if (gameOver) return;
     if (!e.target.classList.contains("cell")) return;
     
     let x = Number(e.target.dataset.x);
@@ -71,13 +73,16 @@ function handleAttack(x, y, cell) {
     }
     if (result === 'All ships sunk') {
         cell.style.background = 'red';
+        gameOver = true;
         alert('You win!');
+        return;
     }
 
     setTimeout(computerAttack, 1000);
 }
 
 computerBoardDiv.addEventListener('click', (e) => {
+    if (gameOver) return;
     if (!e.target.classList.contains("cell")) return;
     if (currentShipIndex < shipsToPlace.length) return;
 
@@ -131,6 +136,8 @@ function computerAttack() {
     }
 
     if (result === 'All ships sunk') {
+        gameOver= true;
         alert("Computer wins");
+        return;
     }
 }
