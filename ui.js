@@ -15,8 +15,10 @@ function createGrid(boardDiv) {
 createGrid(playerBoardDiv);
 
 const game = new Gameboard();
-let shipPlaced = false;
 let mode = 'placing';
+
+const shipsToPlace = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+let currentShipIndex = 0;
 
 playerBoardDiv.addEventListener("click", (e) => {
     if (!e.target.classList.contains("cell")) return;
@@ -32,9 +34,11 @@ playerBoardDiv.addEventListener("click", (e) => {
 });
 
 function handleShipPlacement(x, y, cell) {
-    if (shipPlaced) return;
+    if (currentShipIndex >= shipsToPlace.length) return;
 
-    const ship = new Ship(3);
+    const shipLength = shipsToPlace[currentShipIndex];
+    const ship = new Ship(shipLength);
+
     const status = game.placeShip(x, y, ship);
 
     if (status === 'already occupied' || status === 'invalid coordinates') {
@@ -47,8 +51,11 @@ function handleShipPlacement(x, y, cell) {
         if (c) c.style.background = 'gray';
     });
 
-    shipPlaced = true;
-    mode = 'attacking';
+    currentShipIndex++;
+
+    if (currentShipIndex >= shipsToPlace.length) {
+        mode = 'attacking';
+    }
 } 
 
 function handleAttack(x, y, cell) {
