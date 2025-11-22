@@ -71,8 +71,10 @@ function handleAttack(x, y, cell) {
     }
     if (result === 'All ships sunk') {
         cell.style.background = 'red';
-        console.log('All ships sunks');
+        alert('You win!');
     }
+
+    setTimeout(computerAttack, 1000);
 }
 
 computerBoardDiv.addEventListener('click', (e) => {
@@ -104,4 +106,31 @@ function placeComputerShips() {
             placed = true;
         }
     });
+}
+
+function computerAttack() {
+    let x, y;
+
+    // keep generating random coordinates until you find a cell not already attacked
+    do {
+        x = Math.floor(Math.random() * 10);
+        y = Math.floor(Math.random() * 10);
+    } while (
+        player.attackedShips.some(pos => pos[0] === x && pos[1] === y) ||
+        player.missedAttacks.some(pos => pos[0] === x && pos[1] === y)
+    );
+
+    const result = player.receiveAttack(x, y);
+
+    const cell = playerBoardDiv.querySelector(`.cell[data-x='${x}'][data-y='${y}']`);
+
+    if (result === 'hit') {
+        cell.style.background = 'red';
+    } else if (result === 'miss') {
+        cell.style.background = 'white';
+    }
+
+    if (result === 'All ships sunk') {
+        alert("Computer wins");
+    }
 }
