@@ -5,8 +5,6 @@ const computerBoardDiv = document.getElementById('computer-board');
 
 const player = new Gameboard();
 const computer = new Gameboard();
-
-let mode = 'placing';
 let orientation = 'horizontal';
 
 function createGrid(boardDiv) {
@@ -33,11 +31,7 @@ playerBoardDiv.addEventListener("click", (e) => {
     let x = Number(e.target.dataset.x);
     let y = Number(e.target.dataset.y);
     
-    if (mode === 'placing') {
-        handleShipPlacement(x, y, e.target);
-    } else if (mode === 'attacking') {
-        handleAttack(x, y, e.target);
-    }
+    handleShipPlacement(x, y, e.target);
 });
 
 playerBoardDiv.addEventListener('contextmenu', (e) => {
@@ -60,19 +54,15 @@ function handleShipPlacement(x, y, cell) {
     } 
 
     ship.position.forEach(([px, py]) => {
-        const c = document.querySelector(`.cell[data-x='${px}'][data-y='${py}']`);
+        const c = playerBoardDiv.querySelector(`.cell[data-x='${px}'][data-y='${py}']`);
         if (c) c.style.background = 'gray';
     });
 
     currentShipIndex++;
-
-    if (currentShipIndex >= shipsToPlace.length) {
-        mode = 'attacking';
-    }
 } 
 
 function handleAttack(x, y, cell) {
-    const result = player.receiveAttack(x, y);
+    const result = computer.receiveAttack(x, y);
 
     if (result === 'hit') {
         cell.style.background = 'red';
@@ -86,10 +76,9 @@ function handleAttack(x, y, cell) {
 }
 
 computerBoardDiv.addEventListener('click', (e) => {
-    if (mode !== 'attacking') return;
-
     if (!e.target.classList.contains("cell")) return;
-    
+    if (currentShipIndex < shipsToPlace.length) return;
+
     let x = Number(e.target.dataset.x);
     let y = Number(e.target.dataset.y);
 
@@ -107,9 +96,9 @@ function placeComputerShips() {
 
             const x = Math.floor(Math.random() * 10);
             const y = Math.floor(Math.random() * 10);
-            orientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+            let computerOrientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
 
-            const result = computer.placeShip(x, y, ship, orientation);
+            const result = computer.placeShip(x, y, ship, computerOrientation);
 
             if (result !== true) continue;
             placed = true;
