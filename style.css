@@ -2,18 +2,44 @@
     display: grid;
     grid-template-columns: repeat(10, 30px);
     grid-template-rows: repeat(10, 30px);
-    gap: 2px;
+    gap: 8px;
 }
 
 .cell {
-    width: 30px;
-    height: 30px;
-    background-color: lightblue;
-    border: 1px solid #111;
+    width: 40px;
+    height: 40px;
+    background-color: #212529;
+    border: 1px solid #484646;
     cursor: pointer;
 }
 
 .game {
     display: flex;
-    gap: 50px;
+    gap: 200px;
+    justify-content: space-between;
+    margin: 50px 100px;
+}
+
+body {
+    background: #365270;
+    text-align: center;
+    font-family:'Times New Roman', Times, serif;
+}
+
+h1 {
+    color: #f9032c;
+    font-size: 40px;
+    letter-spacing: 5px;
+}
+
+#heading {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    align-items: center;
+}
+
+#heading img {
+    width: 48px;
+    height: 48px;
 }
