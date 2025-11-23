@@ -54,8 +54,13 @@ class Gameboard {
                 target.hit();
                 this.attackedShips.push([x, y]);
 
-                if (this.ships.every(ship => ship.isSunk())) {
-                    return 'All ships sunk';
+                if (target.isSunk()) {
+
+                    if (this.ships.every(ship => ship.isSunk())) {
+                        return { type: 'all', ship: target};
+                    }
+
+                    return { type: 'ship sunk', ship: target};
                 }
 
                 return 'hit';
