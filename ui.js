@@ -5,7 +5,6 @@ const computerBoardDiv = document.getElementById('computer-board');
 
 const player = new Gameboard();
 const computer = new Gameboard();
-let orientation = 'horizontal';
 let gameOver = false;
 
 function createGrid(boardDiv) {
@@ -21,47 +20,8 @@ function createGrid(boardDiv) {
 createGrid(playerBoardDiv);
 createGrid(computerBoardDiv);
 
-placeComputerShips();
-
-const shipsToPlace = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-let currentShipIndex = 0;
-
-playerBoardDiv.addEventListener("click", (e) => {
-    if (gameOver) return;
-    if (!e.target.classList.contains("cell")) return;
-    
-    let x = Number(e.target.dataset.x);
-    let y = Number(e.target.dataset.y);
-    
-    handleShipPlacement(x, y, e.target);
-});
-
-playerBoardDiv.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-    orientation = orientation === 'horizontal' ? 'vertical' : 'horizontal';
-    console.log('Orientation changed:', orientation);
-});
-
-function handleShipPlacement(x, y, cell) {
-    if (currentShipIndex >= shipsToPlace.length) return;
-
-    const shipLength = shipsToPlace[currentShipIndex];
-    const ship = new Ship(shipLength);
-
-    const status = player.placeShip(x, y, ship, orientation);
-
-    if (status === 'already occupied' || status === 'invalid coordinates') {
-        console.log(status);
-        return;
-    } 
-
-    ship.position.forEach(([px, py]) => {
-        const c = playerBoardDiv.querySelector(`.cell[data-x='${px}'][data-y='${py}']`);
-        if (c) c.style.background = 'gray';
-    });
-
-    currentShipIndex++;
-} 
+placeShips(player);
+placeShips(computer);
 
 function handleAttack(x, y, cell) {
     if (cell.classList.contains('attacked')) return;
@@ -88,7 +48,6 @@ function handleAttack(x, y, cell) {
 computerBoardDiv.addEventListener('click', (e) => {
     if (gameOver) return;
     if (!e.target.classList.contains("cell")) return;
-    if (currentShipIndex < shipsToPlace.length) return;
 
     if (e.target.classList.contains('attacked')) return;
 
@@ -98,7 +57,7 @@ computerBoardDiv.addEventListener('click', (e) => {
     handleAttack(x, y, e.target);
 });
 
-function placeComputerShips() {
+function placeShips(opponent) {
     const lengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 
     lengths.forEach(len => {
@@ -109,11 +68,18 @@ function placeComputerShips() {
 
             const x = Math.floor(Math.random() * 10);
             const y = Math.floor(Math.random() * 10);
-            let computerOrientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+            let orientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
 
-            const result = computer.placeShip(x, y, ship, computerOrientation);
+            const result = opponent.placeShip(x, y, ship, orientation);
 
             if (result !== true) continue;
+            
+            if (opponent === player) {
+                ship.position.forEach(([px, py]) => {
+                    const c = playerBoardDiv.querySelector(`.cell[data-x='${px}'][data-y='${py}']`);
+                    if (c) c.style.background = 'gray';
+                });
+            }
             placed = true;
         }
     });
