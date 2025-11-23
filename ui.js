@@ -56,7 +56,7 @@ function placeShips(opponent) {
             if (opponent === player) {
                 ship.position.forEach(([px, py]) => {
                     const c = playerBoardDiv.querySelector(`.cell[data-x='${px}'][data-y='${py}']`);
-                    if (c) c.style.background = 'gray';
+                    if (c) c.style.background = '#3c6e71';
                 });
             }
 
@@ -99,13 +99,13 @@ function computerAttack() {
 
 function attackResult(result, cell, message) {
     if (result === 'hit') {
-        cell.style.background = 'red';
+        cell.style.background = '#d90429';
     } else if (result === 'miss') {
-        cell.style.background = 'white';
+        cell.style.background = '#8d99ae';
     }
 
     if (result === 'All ships sunk') {
-        cell.style.background = 'red';
+        cell.style.background = '#d90429';
         gameOver= true;
         alert(message);
         return;
