@@ -6,6 +6,7 @@ const computerBoardDiv = document.getElementById('computer-board');
 const player = new Gameboard();
 const computer = new Gameboard();
 let gameOver = false;
+let playerTurn = true;
 
 function createGrid(boardDiv) {
     for (let i = 0; i < 100; i++) {
@@ -66,6 +67,10 @@ function placeShips(opponent) {
 
 function playerAttack(x, y, cell) {
     if (cell.classList.contains('attacked')) return;
+    if (!playerTurn) return;
+
+    playerTurn = false;
+
     cell.classList.add('attacked');
 
     const result = computer.receiveAttack(x, y);
@@ -89,6 +94,7 @@ function computerAttack() {
     cell.classList.add("attacked");
     const result = player.receiveAttack(x, y);
     attackResult(result, cell, 'computer wins');
+    playerTurn = true;
 }
 
 function attackResult(result, cell, message) {
