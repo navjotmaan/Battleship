@@ -1,4 +1,4 @@
-import { Ship, Gameboard } from './script.js';
+import { Ship, Gameboard } from '../script.js';
 
 const playerBoardDiv = document.getElementById("player-board");
 const computerBoardDiv = document.getElementById('computer-board');
