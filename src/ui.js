@@ -104,10 +104,27 @@ function attackResult(result, cell, message) {
         cell.style.background = '#8d99ae';
     }
 
-    if (result === 'All ships sunk') {
-        cell.style.background = '#d90429';
+    if (result.type === 'ship sunk') {
+        highlightShip(result.ship, cell);
+    }
+
+    if (result.type === 'all') {
+        highlightShip(result.ship, cell);
         gameOver= true;
-        alert(message);
+        setTimeout(() => alert(message), 1000);
         return;
     }
 }
+
+function highlightShip(ship, cell) {
+    const isComputerBoard = cell.closest('#computer-board') !== null;
+
+    ship.position.forEach(([x, y]) => {
+        const selector = isComputerBoard
+            ? `#computer-board .cell[data-x='${x}'][data-y='${y}']`
+            : `#player-board .cell[data-x='${x}'][data-y='${y}']`;
+
+        document.querySelector(selector).style.background = '#f4a261';
+    });
+}
+
