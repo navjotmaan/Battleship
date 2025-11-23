@@ -1,4 +1,4 @@
-import { Ship, Gameboard } from './script.js';
+import { Ship, Gameboard } from './src/script.js';
 
 describe('Ship', () => {
     test('Should increase hit count', () => {
