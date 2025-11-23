@@ -23,28 +23,6 @@ createGrid(computerBoardDiv);
 placeShips(player);
 placeShips(computer);
 
-function handleAttack(x, y, cell) {
-    if (cell.classList.contains('attacked')) return;
-    cell.classList.add('attacked');
-
-    const result = computer.receiveAttack(x, y);
-
-    if (result === 'hit') {
-        cell.style.background = 'red';
-    } else if (result === 'miss') {
-        cell.style.background = 'white';
-    }
-
-    if (result === 'All ships sunk') {
-        cell.style.background = 'red';
-        gameOver = true;
-        alert('You win!');
-        return;
-    }
-
-    setTimeout(computerAttack, 1000);
-}
-
 computerBoardDiv.addEventListener('click', (e) => {
     if (gameOver) return;
     if (!e.target.classList.contains("cell")) return;
@@ -54,7 +32,7 @@ computerBoardDiv.addEventListener('click', (e) => {
     let x = Number(e.target.dataset.x);
     let y = Number(e.target.dataset.y);
 
-    handleAttack(x, y, e.target);
+    playerAttack(x, y, e.target);
 });
 
 function placeShips(opponent) {
@@ -73,16 +51,27 @@ function placeShips(opponent) {
             const result = opponent.placeShip(x, y, ship, orientation);
 
             if (result !== true) continue;
-            
+
             if (opponent === player) {
                 ship.position.forEach(([px, py]) => {
                     const c = playerBoardDiv.querySelector(`.cell[data-x='${px}'][data-y='${py}']`);
                     if (c) c.style.background = 'gray';
                 });
             }
+
             placed = true;
         }
     });
+}
+
+function playerAttack(x, y, cell) {
+    if (cell.classList.contains('attacked')) return;
+    cell.classList.add('attacked');
+
+    const result = computer.receiveAttack(x, y);
+    attackResult(result, cell, 'You win!');
+
+    setTimeout(computerAttack, 1000);
 }
 
 function computerAttack() {
@@ -98,9 +87,11 @@ function computerAttack() {
     }
 
     cell.classList.add("attacked");
-
     const result = player.receiveAttack(x, y);
+    attackResult(result, cell, 'computer wins');
+}
 
+function attackResult(result, cell, message) {
     if (result === 'hit') {
         cell.style.background = 'red';
     } else if (result === 'miss') {
@@ -110,7 +101,7 @@ function computerAttack() {
     if (result === 'All ships sunk') {
         cell.style.background = 'red';
         gameOver= true;
-        alert("Computer wins");
+        alert(message);
         return;
     }
 }
