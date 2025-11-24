@@ -7,6 +7,7 @@ let player = new Player('You');
 let computer = new Player('Computer');
 let gameOver = false;
 let playerTurn = true;
+let lastHit = null;
 
 function createGrid(boardDiv) {
     for (let i = 0; i < 100; i++) {
@@ -85,8 +86,31 @@ function playerAttack(x, y, cell) {
 }
 
 function computerAttack() {
+    if (gameOver) return;
     let x, y;
     let cell;
+
+    if (lastHit) {
+        const [hx, hy] = lastHit;
+        const neighbors = [
+            [hx - 1, hy],
+            [hx + 1, hy],
+            [hx, hy - 1],
+            [hx, hy + 1],
+        ];
+
+        for (let [nx, ny] of neighbors) {
+            if (nx < 0 || nx > 9 || ny < 0 || ny > 9) continue;
+
+            const target = document.querySelector(`#player-board .cell[data-x='${nx}'][data-y='${ny}']`);
+            if (!target) continue;
+
+            if (!target.classList.contains('attacked')) {
+                return processComputerMove(nx, ny, target);
+            }
+        }
+        lastHit = null;
+    }
 
     while (true) {
         x = Math.floor(Math.random() * 10);
@@ -96,15 +120,28 @@ function computerAttack() {
         if (!cell.classList.contains('attacked')) break;
     }
 
+    processComputerMove(x, y, cell);
+}
+
+function processComputerMove(x, y, cell) {
     cell.classList.add("attacked");
 
     const result = player.board.receiveAttack(x, y);
     attackResult(result, cell, 'computer wins');
 
+    if (result.type === 'hit') {
+        if (gameOver) return;
+        lastHit = [x, y];
+        setTimeout(computerAttack, 600);
+        return;
+    }
+
     if (result.type === 'miss') {
+        lastHit = null;
         playerTurn = true;
         updateActiveBoard();
     } else {
+        if (gameOver) return;
         setTimeout(computerAttack, 1000);
     }
 }
@@ -163,6 +200,7 @@ function resetGame() {
     computer = new Player("Computer");
     gameOver = false;
     playerTurn = true;
+    lastHit = null;
 
     playerBoardDiv.innerHTML = "";
     computerBoardDiv.innerHTML = "";
@@ -172,4 +210,6 @@ function resetGame() {
 
     placeShips(player.board);
     placeShips(computer.board);
+
+    updateActiveBoard();
 }
