@@ -24,6 +24,8 @@ createGrid(computerBoardDiv);
 placeShips(player);
 placeShips(computer);
 
+updateActiveBoard();
+
 computerBoardDiv.addEventListener('click', (e) => {
     if (gameOver) return;
     if (!e.target.classList.contains("cell")) return;
@@ -69,9 +71,10 @@ function playerAttack(x, y, cell) {
     if (cell.classList.contains('attacked')) return;
     if (!playerTurn) return;
 
-    playerTurn = false;
-
     cell.classList.add('attacked');
+
+    playerTurn = false;
+    updateActiveBoard();
 
     const result = computer.receiveAttack(x, y);
     attackResult(result, cell, 'You win!');
@@ -92,9 +95,12 @@ function computerAttack() {
     }
 
     cell.classList.add("attacked");
+
     const result = player.receiveAttack(x, y);
     attackResult(result, cell, 'computer wins');
+
     playerTurn = true;
+    updateActiveBoard();
 }
 
 function attackResult(result, cell, message) {
@@ -124,7 +130,21 @@ function highlightShip(ship, cell) {
             ? `#computer-board .cell[data-x='${x}'][data-y='${y}']`
             : `#player-board .cell[data-x='${x}'][data-y='${y}']`;
 
-        document.querySelector(selector).style.background = '#f4a261';
+        document.querySelector(selector).style.background = 'rgb(40, 40, 146)';
     });
 }
 
+function updateActiveBoard() {
+    if (gameOver) {
+        playerBoardDiv.classList.remove('active');
+        computerBoardDiv.classList.remove('active');
+        return;
+    }
+    if (playerTurn) {
+        computerBoardDiv.classList.add('active');
+        playerBoardDiv.classList.remove('active');
+    } else {
+        playerBoardDiv.classList.add('active');
+        computerBoardDiv.classList.remove('active');
+    }
+} 
