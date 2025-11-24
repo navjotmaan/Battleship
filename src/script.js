@@ -57,21 +57,23 @@ class Gameboard {
                 if (target.isSunk()) {
 
                     if (this.ships.every(ship => ship.isSunk())) {
-                        return { type: 'all', ship: target};
+                        return { type: 'all', ship: target };
                     }
 
-                    return { type: 'ship sunk', ship: target};
+                    return { type: 'ship sunk', ship: target };
                 }
 
-                return 'hit';
+                return { type: 'hit' };
             }
+            return { type: 'duplicate' };
             
         } else {
             const alreadyMissed = this.missedAttacks.some(pos => pos[0] === x && pos[1] === y);
             if (!alreadyMissed) {
                 this.missedAttacks.push([x, y]);
-                return 'miss';
+                return { type: 'miss' };
             }
+            return { type: 'duplicate' };
         } 
     }
 }
