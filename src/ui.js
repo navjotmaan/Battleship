@@ -73,13 +73,15 @@ function playerAttack(x, y, cell) {
 
     cell.classList.add('attacked');
 
-    playerTurn = false;
-    updateActiveBoard();
-
     const result = computer.receiveAttack(x, y);
     attackResult(result, cell, 'You win!');
 
-    setTimeout(computerAttack, 1000);
+    if (result.type === 'miss') {
+        playerTurn = false;
+        updateActiveBoard();
+        setTimeout(computerAttack, 1000);
+    }
+
 }
 
 function computerAttack() {
@@ -99,14 +101,18 @@ function computerAttack() {
     const result = player.receiveAttack(x, y);
     attackResult(result, cell, 'computer wins');
 
-    playerTurn = true;
-    updateActiveBoard();
+    if (result.type === 'miss') {
+        playerTurn = true;
+        updateActiveBoard();
+    } else {
+        setTimeout(computerAttack, 1000);
+    }
 }
 
 function attackResult(result, cell, message) {
-    if (result === 'hit') {
+    if (result.type === 'hit') {
         cell.style.background = '#d90429';
-    } else if (result === 'miss') {
+    } else if (result.type === 'miss') {
         cell.style.background = '#8d99ae';
     }
 
@@ -120,6 +126,8 @@ function attackResult(result, cell, message) {
         setTimeout(() => alert(message), 1000);
         return;
     }
+
+    if (result.type === 'duplicate') return;
 }
 
 function highlightShip(ship, cell) {
