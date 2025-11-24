@@ -1,10 +1,10 @@
-import { Ship, Gameboard } from './script.js';
+import { Ship, Gameboard, Player } from './script.js';
 
 const playerBoardDiv = document.getElementById("player-board");
 const computerBoardDiv = document.getElementById('computer-board');
 
-const player = new Gameboard();
-const computer = new Gameboard();
+let player = new Player('You');
+let computer = new Player('Computer');
 let gameOver = false;
 let playerTurn = true;
 
@@ -21,8 +21,8 @@ function createGrid(boardDiv) {
 createGrid(playerBoardDiv);
 createGrid(computerBoardDiv);
 
-placeShips(player);
-placeShips(computer);
+placeShips(player.board);
+placeShips(computer.board);
 
 updateActiveBoard();
 
@@ -55,7 +55,7 @@ function placeShips(opponent) {
 
             if (result !== true) continue;
 
-            if (opponent === player) {
+            if (opponent === player.board) {
                 ship.position.forEach(([px, py]) => {
                     const c = playerBoardDiv.querySelector(`.cell[data-x='${px}'][data-y='${py}']`);
                     if (c) c.style.background = '#3c6e71';
@@ -73,7 +73,7 @@ function playerAttack(x, y, cell) {
 
     cell.classList.add('attacked');
 
-    const result = computer.receiveAttack(x, y);
+    const result = computer.board.receiveAttack(x, y);
     attackResult(result, cell, 'You win!');
 
     if (result.type === 'miss') {
@@ -98,7 +98,7 @@ function computerAttack() {
 
     cell.classList.add("attacked");
 
-    const result = player.receiveAttack(x, y);
+    const result = player.board.receiveAttack(x, y);
     attackResult(result, cell, 'computer wins');
 
     if (result.type === 'miss') {
@@ -124,6 +124,7 @@ function attackResult(result, cell, message) {
         highlightShip(result.ship, cell);
         gameOver= true;
         setTimeout(() => alert(message), 1000);
+        setTimeout(() => resetGame(), 1000);
         return;
     }
 
@@ -156,3 +157,19 @@ function updateActiveBoard() {
         computerBoardDiv.classList.remove('active');
     }
 } 
+
+function resetGame() {
+    player = new Player("You");
+    computer = new Player("Computer");
+    gameOver = false;
+    playerTurn = true;
+
+    playerBoardDiv.innerHTML = "";
+    computerBoardDiv.innerHTML = "";
+
+    createGrid(playerBoardDiv);
+    createGrid(computerBoardDiv);
+
+    placeShips(player.board);
+    placeShips(computer.board);
+}
