@@ -1,4 +1,5 @@
-import { Ship, Gameboard, Player } from './script.js';
+import { Ship, Player } from './script.js';
+import { getComputerTarget } from './ai.js';
 
 const playerBoardDiv = document.getElementById("player-board");
 const computerBoardDiv = document.getElementById('computer-board');
@@ -87,43 +88,13 @@ function playerAttack(x, y, cell) {
 
 function computerAttack() {
     if (gameOver) return;
-    let x, y;
-    let cell;
 
-    if (lastHit) {
-        const [hx, hy] = lastHit;
-        const neighbors = [
-            [hx - 1, hy],
-            [hx + 1, hy],
-            [hx, hy - 1],
-            [hx, hy + 1],
-        ];
+    const { x, y, cell } = getComputerTarget(lastHit, playerBoardDiv, player.board);
 
-        for (let [nx, ny] of neighbors) {
-            if (nx < 0 || nx > 9 || ny < 0 || ny > 9) continue;
-
-            const target = document.querySelector(`#player-board .cell[data-x='${nx}'][data-y='${ny}']`);
-            if (!target) continue;
-
-            if (!target.classList.contains('attacked')) {
-                return processComputerMove(nx, ny, target);
-            }
-        }
-        lastHit = null;
-    }
-
-    while (true) {
-        x = Math.floor(Math.random() * 10);
-        y = Math.floor(Math.random() * 10);
-
-        cell = document.querySelector(`#player-board .cell[data-x='${x}'][data-y='${y}']`);
-        if (!cell.classList.contains('attacked')) break;
-    }
-
-    processComputerMove(x, y, cell);
+    handleComputerStrike(x, y, cell);
 }
 
-function processComputerMove(x, y, cell) {
+function handleComputerStrike(x, y, cell) {
     cell.classList.add("attacked");
 
     const result = player.board.receiveAttack(x, y);
@@ -140,8 +111,10 @@ function processComputerMove(x, y, cell) {
         lastHit = null;
         playerTurn = true;
         updateActiveBoard();
-    } else {
-        if (gameOver) return;
+        return;
+    } 
+
+    if (!gameOver) {
         setTimeout(computerAttack, 1000);
     }
 }
