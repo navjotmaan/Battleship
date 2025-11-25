@@ -1,4 +1,4 @@
-import { Ship, Player } from './script.js';
+import { Ship, Gameboard, Player } from './script.js';
 import { getComputerTarget } from './ai.js';
 
 const playerBoardDiv = document.getElementById("player-board");
@@ -81,7 +81,7 @@ function playerAttack(x, y, cell) {
     if (result.type === 'miss') {
         playerTurn = false;
         updateActiveBoard();
-        setTimeout(computerAttack, 1000);
+        setTimeout(computerAttack, 600);
     }
 
 }
@@ -115,7 +115,7 @@ function handleComputerStrike(x, y, cell) {
     } 
 
     if (!gameOver) {
-        setTimeout(computerAttack, 1000);
+        setTimeout(computerAttack, 600);
     }
 }
 
@@ -133,8 +133,8 @@ function attackResult(result, cell, message) {
     if (result.type === 'all') {
         highlightShip(result.ship, cell);
         gameOver= true;
-        setTimeout(() => alert(message), 1000);
-        setTimeout(() => resetGame(), 1000);
+        setTimeout(() => alert(message), 600);
+        setTimeout(() => resetGame(), 600);
         return;
     }
 
@@ -186,3 +186,10 @@ function resetGame() {
 
     updateActiveBoard();
 }
+
+document.getElementById('randomize').addEventListener('click', () => {
+    playerBoardDiv.innerHTML = '';
+    createGrid(playerBoardDiv);
+    player.board = new Gameboard();
+    placeShips(player.board);
+});
